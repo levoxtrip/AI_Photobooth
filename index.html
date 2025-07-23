@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebSocket Text Sender</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #ffffff;
+    }
+
+    .container {
+      text-align: center;
+      width: 90%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      font-size: 2rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
+      border: 2px solid #00ffff;
+      background: rgba(0, 0, 0, 0.5);
+      color: #00ffff;
+      border-radius: 0.5rem;
+    }
+
+    button.send-btn, button.clear-btn {
+      font-size: 1.5rem;
+      padding: 1rem 2rem;
+      margin: 0.5rem;
+      background: #00ffff;
+      color: #000;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button.send-btn:hover, button.clear-btn:hover {
+      background: #00aaff;
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .suggestions button {
+      font-size: 1.2rem;
+      padding: 0.8rem 1.5rem;
+      background: #662d91;
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .suggestions button:hover {
+      background: #a64ac9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <input type="text" id="textInput" placeholder="Type your prompt..." />
+    <br />
+    <button class="send-btn" onclick="sendText()">Send</button>
+    <button class="clear-btn" onclick="clearText()">Clear</button>
+    <div class="suggestions">
+      <button onclick="appendText('Black Panther')">Black Panther</button>
+      <button onclick="appendText('Silver Surfer')">Silver Surfer</button>
+      <button onclick="appendText('Joker')">Joker</button>
+      <button onclick="appendText('Harley Quinn')">Harley Quinn</button>
+      <button onclick="appendText('Batwoman')">Batwoman</button>
+      <button onclick="appendText('Wednesday Adams')">Wednesday Adams</button>
+      <button onclick="appendText('Spider-Man')">Spider-Man</button>
+      <button onclick="appendText('futuristic astronaut in a sleek space suit, reflective helmet with glowing HUD interface, standing on an alien planet, sci-fi environment, cinematic lighting, highly detailed, ultra sharp, 8K, concept art style')">Astronaut</button>
+    </div>
+  </div>
+
+  <script>
+    // Replace with your actual WebSocket URL
+    const socket = new WebSocket("wss://hx-web-main-c210ccc5eae4.herokuapp.com/");
+
+    function sendText() {
+      const text = document.getElementById("textInput").value;
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(text);
+      } else {
+        alert("WebSocket is not connected.");
+      }
+    }
+
+    function appendText(text) {
+      const input = document.getElementById("textInput");
+      input.value += (input.value ? " " : "") + text;
+      input.focus();
+    }
+
+    function clearText() {
+      document.getElementById("textInput").value = "";
+    }
+
+    socket.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    socket.onerror = (err) => {
+      console.error("WebSocket error:", err);
+    };
+  </script>
+</body>
+</html>
